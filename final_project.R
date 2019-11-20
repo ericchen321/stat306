@@ -23,13 +23,20 @@ aics<-c(AIC(model1,k=2),AIC(model2,k=3),AIC(model3,k=4),AIC(model4,k=5),AIC(mode
 sForward<-regsubsets(res~.,data=data,method="forward")
 ssForward<-summary(sForward)
 
-# cross-validation selection: TODO
+# TODO: cross-validation selection, but maybe not necessary?
 
-# now we've decided to select fro_num as the only explanatory variable.
-# let's see if model1 yields a good residual plot
+# now we've decided to select fro_num as the only explanatory variable,
+# due to the following resaons:
+# 1) for every best model with 1/2/../6 variables, only fro_num yields
+#    significant coefficients
+# 2) The res~fro_num model has the lowest adj. R^2
+# 3) The res~fro_num model has the lowest AIC value
+# now we want to get the the residual plot of the res~fro_num model
+# to see if the model is fine
 plot(fro_num, model1$residuals)
 
-# the plot is bad, so we eyeball the relationship btw res and fro_num
+# the plot is bad, so we eyeball the relationship btw res and fro_num,
+# to see if we can tweak their relationship
 plot(fro_num, res)
 
 # we noticed two things from the res vs. fro_num plot:
