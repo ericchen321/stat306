@@ -1,6 +1,6 @@
 # workspace setup
 #install.packages("leaps")
-#library(leaps)
+library(leaps)
 rm(list = ls())
 setwd("C:/users/cgx19/stat306")
 data <- read.table(file = "yacht_hydrodynamics.data", header = FALSE)
@@ -33,11 +33,11 @@ ssForward<-summary(sForward)
 # 3) The res~fro_num model has the lowest AIC value
 # now we want to get the the residual plot of the res~fro_num model
 # to see if the model is fine
-plot(fro_num, model1$residuals)
+plot(data$fro_num, model1$residuals)
 
 # the plot is bad, so we eyeball the relationship btw res and fro_num,
 # to see if we can tweak their relationship
-plot(fro_num, res)
+plot(data$fro_num, data$res)
 
 # we noticed two things from the res vs. fro_num plot:
 # 1) res becomes more spread out as fro_num increases
@@ -47,27 +47,27 @@ plot(fro_num, res)
 # 2) raise fro_num to higher powers
 
 # now we build a few models of the form log(res)~fro_num^<power>
-resLog<-log(res)
+resLog<-log(data$res)
 
 # we do variable selection again to see if any other explanatory variables
 # should be included
-sSubsetLog<-regsubsets(res~.,data=data,method="exhaustive")
+sSubsetLog<-regsubsets(data$res~.,data=data,method="exhaustive")
 ssSubsetLog<-summary(sSubset)
 
 # now we've verified that stil we should include fro_num only;
 # we can proceed to build linear models
-model1Log<-lm(resLog~poly(fro_num,1,raw=TRUE),data=data)
-model1LogQuad<-lm(resLog~poly(fro_num,2,raw=TRUE),data=data)
-model1LogCubic<-lm(resLog~poly(fro_num,3,raw=TRUE),data=data)
-model1LogPwr4<-lm(resLog~poly(fro_num,4,raw=TRUE),data=data)
-model1LogPwr5<-lm(resLog~poly(fro_num,5,raw=TRUE),data=data)
+model1Log<-lm(resLog~poly(data$fro_num,1,raw=TRUE),data=data)
+model1LogQuad<-lm(resLog~poly(data$fro_num,2,raw=TRUE),data=data)
+model1LogCubic<-lm(resLog~poly(data$fro_num,3,raw=TRUE),data=data)
+model1LogPwr4<-lm(resLog~poly(data$fro_num,4,raw=TRUE),data=data)
+model1LogPwr5<-lm(resLog~poly(data$fro_num,5,raw=TRUE),data=data)
 
 # and plot their residuals
-plot(fro_num, model1Log$residuals)
-plot(fro_num, model1LogQuad$residuals)
-plot(fro_num, model1LogCubic$residuals)
-plot(fro_num, model1LogPwr4$residuals)
-plot(fro_num, model1LogPwr5$residuals)
+plot(data$fro_num, model1Log$residuals)
+plot(data$fro_num, model1LogQuad$residuals)
+plot(data$fro_num, model1LogCubic$residuals)
+plot(data$fro_num, model1LogPwr4$residuals)
+plot(data$fro_num, model1LogPwr5$residuals)
 
 # we notice the 4th and 5th power model yield good residual plots;
 # so we use summary() to compare them using p-values of coefficients
@@ -81,3 +81,13 @@ summary(model1LogPwr5)
 # normality assumption
 qqnorm(model1LogPwr4$residuals)
 qqline(model1LogPwr4$residuals)
+
+# inspect the AIC value of our final value
+AIC(model1LogPwr4,k=5)
+
+# what if we include pris_coe as well?
+model1LogWithPrisCoe<-lm(resLog~poly(data$fro_num,1,raw=TRUE)+data$pris_coe,data=data)
+model1LogQuadWithPrisCoe<-lm(resLog~poly(data$fro_num,2,raw=TRUE)+data$pris_coe,data=data)
+model1LogCubicWithPrisCoe<-lm(resLog~poly(data$fro_num,3,raw=TRUE)+data$pris_coe,data=data)
+model1LogPwr4WithPrisCoe<-lm(resLog~poly(data$fro_num,4,raw=TRUE)+data$pris_coe,data=data)
+model1LogPwr5WithPrisCoe<-lm(resLog~poly(data$fro_num,5,raw=TRUE)+data$pris_coe,data=data)
