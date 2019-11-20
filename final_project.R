@@ -48,6 +48,14 @@ plot(fro_num, res)
 
 # now we build a few models of the form log(res)~fro_num^<power>
 resLog<-log(res)
+
+# we do variable selection again to see if any other explanatory variables
+# should be included
+sSubsetLog<-regsubsets(res~.,data=data,method="exhaustive")
+ssSubsetLog<-summary(sSubset)
+
+# now we've verified that stil we should include fro_num only;
+# we can proceed to build linear models
 model1Log<-lm(resLog~poly(fro_num,1,raw=TRUE),data=data)
 model1LogQuad<-lm(resLog~poly(fro_num,2,raw=TRUE),data=data)
 model1LogCubic<-lm(resLog~poly(fro_num,3,raw=TRUE),data=data)
