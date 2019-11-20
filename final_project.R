@@ -32,22 +32,33 @@ plot(fro_num, model1$residuals)
 # the plot is bad, so we eyeball the relationship btw res and fro_num
 plot(fro_num, res)
 
-# now we build models of higher order
-model1Quad<-lm(res~poly(fro_num,2,raw=TRUE),data=data)
-model1Cubic<-lm(res~poly(fro_num,3,raw=TRUE),data=data)
-model1Pwr4<-lm(res~poly(fro_num,4,raw=TRUE),data=data)
-model1Pwr5<-lm(res~poly(fro_num,5,raw=TRUE),data=data)
+# we noticed two things from the res vs. fro_num plot:
+# 1) res becomes more spread out as fro_num increases
+# 2) res increases faster than linear rate
+# so we decide to address what we've noticed by
+# 1) applying log to res, and
+# 2) raise fro_num to higher powers
 
-# residual plots of higher-order models
-plot(fro_num, model1Quad$residuals)
-plot(fro_num, model1Cubic$residuals)
-plot(fro_num, model1Pwr4$residuals)
-plot(fro_num, model1Pwr5$residuals)
+# now we build a few models of the form log(res)~fro_num^<power>
+resLog<-log(res)
+model1Log<-lm(resLog~poly(fro_num,1,raw=TRUE),data=data)
+model1LogQuad<-lm(resLog~poly(fro_num,2,raw=TRUE),data=data)
+model1LogCubic<-lm(resLog~poly(fro_num,3,raw=TRUE),data=data)
+model1LogPwr4<-lm(resLog~poly(fro_num,4,raw=TRUE),data=data)
+model1LogPwr5<-lm(resLog~poly(fro_num,5,raw=TRUE),data=data)
 
-# we notice 4th and 5th order models have good residual plots. We then
-# decide between them using the p-values of their coefficients, and
-# their adjusted R^2
-summary(model1Pwr4)
-summary(model1Pwr5)
+# and plot their residuals
+plot(fro_num, model1Log$residuals)
+plot(fro_num, model1LogQuad$residuals)
+plot(fro_num, model1LogCubic$residuals)
+plot(fro_num, model1LogPwr4$residuals)
+plot(fro_num, model1LogPwr5$residuals)
 
-# so we decide to use the 4th power model
+# we notice the 4th and 5th power model yield good residual plots;
+# so we use summary() to compare them using p-values of coefficients
+# and adj R^2 values
+summary(model1LogPwr4)
+summary(model1LogPwr5)
+
+# we find that the 5th power model has insignificant coefficients,
+# and lower adj R^2. So we use the 4th power model
