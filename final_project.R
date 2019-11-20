@@ -68,4 +68,8 @@ summary(model1LogPwr4)
 summary(model1LogPwr5)
 
 # we find that the 5th power model has insignificant coefficients,
-# and lower adj R^2. So we use the 4th power model
+# and lower adj R^2. So we use the 4th power model;
+# also we do the qq-plot to make sure the residual satisifies the
+# normality assumption
+qqnorm(model1LogPwr4$residuals)
+qqline(model1LogPwr4$residuals)
