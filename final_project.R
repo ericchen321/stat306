@@ -53,6 +53,13 @@ resLog<-log(data$res)
 # should be included
 sSubsetLog<-regsubsets(data$res~.,data=data,method="exhaustive")
 ssSubsetLog<-summary(sSubset)
+model1Log<-lm(resLog~fro_num, data=data)
+model2Log<-lm(resLog~pris_coe+fro_num, data=data)
+model3Log<-lm(resLog~pos+pris_coe+fro_num, data=data)
+model4Log<-lm(resLog~pos+pris_coe+len_dis_rat+fro_num, data=data)
+model5Log<-lm(resLog~pos+len_dis_rat+be_dr_rat+len_be_rat+fro_num, data=data)
+model6Log<-lm(resLog~.,data=data)
+aicsLog<-c(AIC(model1Log,k=2),AIC(model2Log,k=3),AIC(model3Log,k=4),AIC(model4Log,k=5),AIC(model5Log,k=6),AIC(model6Log,k=7))
 
 # now we've verified that stil we should include fro_num only;
 # we can proceed to build linear models
@@ -84,6 +91,11 @@ qqline(model1LogPwr4$residuals)
 
 # inspect the AIC value of our final value
 AIC(model1LogPwr4,k=5)
+
+# scatterplot of fro_num vs resLog, and curve of the best-fit model
+plot(data$fro_num, resLog)
+x<-seq(0,0.45,by=0.01)
+lines(x,-14.57677+ 169.47328*x-760.56952*x^2+1607.63538*x^3-1224.37334*x^4,col="red")
 
 # what if we include pris_coe as well?
 model1LogWithPrisCoe<-lm(resLog~poly(data$fro_num,1,raw=TRUE)+data$pris_coe,data=data)
